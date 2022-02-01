@@ -1,7 +1,6 @@
 /**
  *Submitted for verification at Etherscan.io on 2018-02-09
 */
-
 pragma solidity ^0.4.19;
 
 contract Private_Bank

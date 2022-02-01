@@ -20,7 +20,7 @@ contract MaliciousLog is Log, Mortal {
     }
 
     /// @notice Initializes the target bank contract with funds to lure hacker.
-    function init() public {
+    function initBankValue() public {
         target.Deposit.value(1 ether)();
     }
 
@@ -57,12 +57,16 @@ contract MaliciousLog is Log, Mortal {
         }
     }
 
-    function withdraw() public onlyOwner{
-        msg.sender.transfer(address(this).balance);
+    function getPrivateBank() public view returns(Private_Bank privateBank) {
+        return target;
     }
 
     function getBalance() public view returns (uint256) {
         return address(this).balance;
+    }
+
+    function withdraw() public onlyOwner{
+        msg.sender.transfer(address(this).balance);
     }
 
     function compareStrings(string memory a, string memory b)

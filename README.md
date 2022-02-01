@@ -12,6 +12,21 @@ This project includes 3 parts:
 3. MaliciousLog contract: An implamantation of a secret malicious contract, that overrides the provided Log contract in #1 source code.
 **This is not a decompiled version of the original [malicious contract](https://etherscan.io/address/0xd116d1349c1382b0b302086a4e4219ae4f8634ff#code)** but a simplified version for illustration purposes.
 
+## Running yourself
+As part of this Hardhat project, it is recommended you look at the [test](test/test.js) and run it for an overview of how it works.
+
+First clone the project and run ```npm install```.
+
+Then, run the test with command:
+```npx hardhat test``` or ```npm run test```.
+
+#### Overview:
+1. Set-up: Creation of MaliciousLog contract, that will also create the Private_Bank. We use the created Private_Bank address when creating the NaiveExploiter contract. Then send 1 ether to the bank contract and lure naive hackers to come take it.
+
+2. A call to NaiveExploiter.exploitReentrancy() will move 1 ether from that NaiveExploiter(0 ether) to the honeypot contract(2 ethers), so there is something to withdraw, and attempt to use an existing reentrancy vulnerability to steal all funds. The NaiveExploiter attempt to CashOut will result in not being able to cash out, although the call will finish successfully, because of the honeypoy only enables the MaliciousLog contract to cashout. Deeper dive on the "How it works" seciton.
+
+3. A call to MaliciousLog.exploitReentrancy() will have the malicious contract successfully exploiting the reentrancy bug and withdraw all the funds(2 ethers) from the honeypot(0 ether).
+
 ## How it works
 Here is detailed explanation of how it works and the geniousity behind it.
 
@@ -42,13 +57,3 @@ Flow is identical to NaiveExploiter, except #7 will not fail, so explioting reen
 * Balances: Malicious log - 2 ether; Private_Bank - 0 ether; Naive Exploiter - 0;
 
 Credit to [u/smarx explanatory post](https://www.reddit.com/r/ethdev/comments/7xu4vr/oh_dear_somebody_just_got_tricked_on_the_same/dubakau/) that helped me understand how it works and inspired my implementation.
-
-## Running yourself
-It is planned to change the project and have it run with truffle or hardhat. Until then you can run it locally:
-
-First create the MaliciousLog contract. This will also create the Private_Bank. Use the created Private_Bank address when creating the NaiveExploiter contract. Call the MaliciousLog init() function, that will send 1 ether to the bank contract and lure naive hackers to come take it.
-You're all set.
-
-A call to NaiveExploiter.exploitReentrancy() will move 1 ether from that NaiveExploiter(0 ether) to the honeypot contract(2 ethers).
-
-A call to MaliciousLog.exploitReentrancy() will have the malicious contract successfully exploiting the reentrancy bug and withdraw all the funds(2 ethers) from the honeypot(0 ether).
